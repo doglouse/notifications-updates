@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRIME Admin 3 — Notifications</title>
+
+<!-- Fonts actually used: Roboto (chrome/labels), Roboto Flex (values), Inter (modal titles) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Flex:opsz,wght@8..144,300..700&family=Inter:wght@400;500;600&display=swap">
+<!-- Icons: Material Design Icons 7.4.47 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+
+<style>
+/* ---- PRIME Admin 3 tokens & type ---- */
+/* ============================================================
+   PrimeAdmin 3 — Colors & Type
+   Material-style admin design system.
+   v2 (Aug 2026): squared buttons, trimmed palette, caps heading
+   ladder, softened elevation. Reconciled against the Activity
+   Details redesign, the Admin 3 Pattern Library, and the
+   Newsletters build.
+   ============================================================ */
+
+:root {
+  /* ---------- Interactive blue -------------------------------
+     One accent per action class. Blue is anything that changes
+     data; aqua is reserved for links that leave the page. */
+  --pa-primary:        rgb(25, 118, 210);
+  --pa-primary-700:    rgb(17,  71, 161);  /* active tab, pressed, link hover */
+  --pa-primary-050:    rgb(238, 245, 252); /* inline sub-panels, row hover */
+  --pa-primary-12a:    rgba(25, 118, 210, 0.12); /* selected chip / tag fill */
+  --pa-primary-04a:    rgba(25, 118, 210, 0.04); /* hover film */
+
+  /* ---------- Aqua — external-link buttons only -------------- */
+  --pa-aqua-500:       rgb(  0, 173, 238);
+
+  /* ---------- Ink -------------------------------------------- */
+  --pa-ink:            rgb( 33,  33,  33); /* headings, body */
+  --pa-ink-2:          rgb( 66,  66,  66); /* icon default, rule copy */
+  --pa-ink-3:          rgb(102, 102, 102); /* field labels, helper text */
+  --pa-ink-4:          rgb(113, 113, 113); /* meta values, secondary rows */
+  --pa-ink-6:          rgb(137, 147, 158); /* placeholder, empty value */
+  --pa-ink-7:          rgb(158, 158, 158); /* disabled border, empty glyph */
+
+  /* ---------- Surfaces --------------------------------------- */
+  --pa-paper:          rgb(255, 255, 255);
+  --pa-band:           rgb(240, 240, 240); /* section band — the only
+                                              non-white content surface */
+  --pa-line:           rgb(238, 238, 238); /* hairline */
+  --pa-line-2:         rgb(224, 224, 224); /* unselected chip */
+  --pa-divider:        rgba(0, 0, 0, 0.12); /* card + modal borders */
+  --pa-rule:           rgba(0, 0, 0, 0.60); /* list-table head rule */
+  --pa-sidebar-bg:     rgb( 32,  32,  32);
+  --pa-sidebar-active: rgb( 62,  62,  62);
+  --pa-avatar-green:   rgb( 76, 175,  80); /* signed-in user, header only */
+
+  /* ---------- Field chrome -----------------------------------
+     Record fields focus to black, not blue: the underline is
+     structure, not an action. */
+  --pa-field-line:     rgba(0, 0, 0, 0.42);
+  --pa-field-focus:    rgb(0, 0, 0);
+
+  /* ---------- Semantic — status text, toasts, validation ------ */
+  --pa-success:        rgb( 46, 125,  50);
+  --pa-success-bg:     rgb(232, 245, 233);
+  --pa-warning:        rgb(233, 143,  40);
+  --pa-warning-bg:     rgb(255, 244, 229);
+  --pa-error:          rgb(211,  47,  47);
+  --pa-error-bg:       rgb(253, 237, 237);
+
+  /* ---------- Type stack ------------------------------------- */
+  --pa-font-sans:       "Roboto", system-ui, sans-serif;
+  --pa-font-display:    "Roboto Flex", "Roboto", system-ui, sans-serif;
+  --pa-font-modal:      "Inter", "Roboto", system-ui, sans-serif;
+
+  /* ---------- Radii ------------------------------------------
+     Buttons are squared. The 16px pill is reserved for chips,
+     role badges, and status pills. */
+  --pa-radius-xs:    2px;   /* table cells */
+  --pa-radius-sm:    4px;   /* cards, buttons, fields, search */
+  --pa-radius-lg:    8px;   /* modals, panels, dropzone */
+  --pa-radius-pill: 16px;   /* chips, badges */
+
+  /* ---------- Elevation -------------------------------------- */
+  --pa-elev-1: 0 1px 2px 0 rgba(0,0,0,0.05), 0 1px 1px -1px rgba(0,0,0,0.05);
+  --pa-elev-2: 0 1px 5px 0 rgba(0,0,0,0.12),
+               0 2px 2px 0 rgba(0,0,0,0.14),
+               0 3px 1px -2px rgba(0,0,0,0.20);                  /* buttons */
+  --pa-elev-card: 0 10px 13px -5px rgba(0,0,0,0.05),
+                  0 4px 5px -6px rgba(0,0,0,0.05);               /* form cards */
+  --pa-elev-raised: 0 20px 25px -5px rgba(0,0,0,0.10),
+                    0 8px 10px -6px rgba(0,0,0,0.10);            /* faculty card, toast */
+  --pa-elev-modal: 0 9px 46px 8px rgba(0,0,0,0.12),
+                   0 24px 38px 3px rgba(0,0,0,0.14),
+                   0 11px 15px -7px rgba(0,0,0,0.20);            /* modals, drawers */
+
+  /* ---------- Spacing ---------------------------------------- */
+  --pa-s-1:  4px;
+  --pa-s-2:  8px;
+  --pa-s-3: 12px;
+  --pa-s-4: 16px;
+  --pa-s-5: 20px;
+  --pa-s-6: 24px;   /* between stacked fields, between cards */
+  --pa-s-8: 32px;   /* page gutter, card padding */
+  --pa-s-10: 40px;  /* between paired columns */
+  --pa-s-15: 60px;
+}
+
+/* ============================================================
+   Heading ladder — all caps, Roboto Regular, one role per level
+   ============================================================ */
+
+/* Page title. One per page. */
+.pa-page-title {
+  font-family: var(--pa-font-sans);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 34px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--pa-primary);
+  margin: 0;
+}
+
+/* Screen heading — names the record, carries its code in parens. */
+.pa-screen-title {
+  font-family: var(--pa-font-sans);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 30px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--pa-ink);
+  margin: 0;
+}
+
+/* Card section band title — sits on --pa-band. */
+.pa-band-title {
+  font-family: var(--pa-font-sans);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--pa-ink);
+  margin: 0;
+}
+
+/* Rail heading — groups right-hand utility stacks. */
+.pa-rail-title {
+  font-family: var(--pa-font-sans);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 26px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--pa-ink);
+  margin: 0;
+}
+
+/* Modal / drawer title — Inter, the only place it appears. */
+.pa-modal-title {
+  font-family: var(--pa-font-modal);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 26px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--pa-ink);
+  margin: 0;
+}
+
+/* ============================================================
+   Body, meta, and control type
+   ============================================================ */
+
+.pa-body-16 { font-family: var(--pa-font-display); font-size: 16px; line-height: 24px; letter-spacing: 0.1px; color: var(--pa-ink); }
+.pa-body-14 { font-family: var(--pa-font-sans); font-size: 14px; line-height: 20px; color: var(--pa-ink); }
+.pa-body-13 { font-family: var(--pa-font-sans); font-size: 13.5px; line-height: 20px; color: var(--pa-ink); }
+.pa-body-12 { font-family: var(--pa-font-sans); font-size: 12px; line-height: 18px; color: var(--pa-ink); }
+
+/* Helper text. Belongs to the field it explains, never the group. */
+.pa-helper { font-family: var(--pa-font-sans); font-size: 12px; line-height: 18px; color: var(--pa-ink-3); }
+
+/* Meta strip under a page title: key in caps, value in medium. */
+.pa-meta { display: flex; flex-wrap: wrap; gap: 6px 30px; font-family: var(--pa-font-sans); font-size: 13px; }
+.pa-meta-key { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--pa-ink-3); }
+.pa-meta-val { font-weight: 500; color: var(--pa-ink); }
+.pa-meta-val--success { color: var(--pa-success); font-weight: 500; }
+.pa-meta-val--warning { color: var(--pa-warning); font-weight: 500; }
+.pa-meta-val--error   { color: var(--pa-error);   font-weight: 500; }
+
+/* Field label at rest, and once floated above the underline. */
+.pa-field-label { font-family: var(--pa-font-sans); font-size: 13px; line-height: 19px; color: var(--pa-ink-3); }
+.pa-field-label--float { font-size: 11.5px; line-height: 16px; color: var(--pa-ink-3); }
+
+/* Value inside a field. */
+.pa-input-text { font-family: var(--pa-font-display); font-size: 13.5px; line-height: 20px; color: var(--pa-ink); }
+
+.pa-button-text { font-family: var(--pa-font-sans); font-weight: 500; font-size: 12px; line-height: 100%; text-transform: uppercase; }
+.pa-button-text-sm { font-family: var(--pa-font-display); font-weight: 700; font-size: 10.8px; line-height: 16.2px; text-transform: uppercase; }
+.pa-chip-text { font-family: var(--pa-font-display); font-weight: 700; font-size: 10.5px; line-height: 16px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+.pa-caption { font-family: var(--pa-font-sans); font-size: 11.5px; line-height: 16px; color: var(--pa-ink-3); }
+
+/* Section eyebrow inside rule callouts and sub-panels. */
+.pa-eyebrow {
+  font-family: var(--pa-font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pa-primary);
+}
+
+/* ---- components ---- */
+/* PrimeAdmin 3 — component styles for preview cards, templates, and
+   the UI kit. Tokens come from ../colors_and_type.css.
+   v2 (Aug 2026): squared buttons, 4px cards, section bands, grid +
+   list tables, app chrome, empty states. */
+@import url("../colors_and_type.css");
+
+/* ================= Buttons =====================================
+   Squared to 4px. Label always all caps. One primary per region. */
+.pa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: var(--pa-radius-sm);
+  border: none;
+  font-family: var(--pa-font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  isolation: isolate;
+  transition: background 150ms cubic-bezier(.4,0,.2,1), box-shadow 150ms cubic-bezier(.4,0,.2,1);
+}
+.pa-btn::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: transparent; pointer-events: none; z-index: 1; }
+.pa-btn > * { position: relative; z-index: 2; }
+.pa-btn--sm { height: 24px; padding: 0 12px; font-size: 10.8px; }
+.pa-btn--lg { height: 40px; padding: 0 20px; }
+.pa-btn--block { width: 100%; }
+/* Escape hatch: row-level add/remove buttons inside picker drawers. */
+.pa-btn--pill { border-radius: var(--pa-radius-pill); }
+
+.pa-btn--primary { background: var(--pa-primary); color: #fff; box-shadow: var(--pa-elev-2); }
+.pa-btn--primary:hover::after  { background: rgba(255,255,255,0.08); }
+.pa-btn--primary:active::after { background: rgba(0,0,0,0.24); }
+
+.pa-btn--secondary { background: #fff; color: var(--pa-primary); border: 1px solid var(--pa-primary); }
+.pa-btn--secondary:hover::after  { background: var(--pa-primary-04a); }
+.pa-btn--secondary:active::after { background: rgba(25,118,210,0.24); }
+
+.pa-btn--secondary-grey { background: #fff; color: var(--pa-ink-2); border: 1px solid var(--pa-ink-7); }
+.pa-btn--secondary-grey:hover::after  { background: rgba(33,33,33,0.04); }
+.pa-btn--secondary-grey:active::after { background: rgba(33,33,33,0.24); }
+
+.pa-btn--tertiary { background: transparent; color: var(--pa-primary); }
+.pa-btn--tertiary:hover::after  { background: var(--pa-primary-04a); }
+.pa-btn--tertiary:active::after { background: rgba(25,118,210,0.24); }
+
+.pa-btn--tertiary-grey { background: transparent; color: var(--pa-ink-2); }
+.pa-btn--tertiary-grey:hover::after  { background: rgba(33,33,33,0.04); }
+.pa-btn--tertiary-grey:active::after { background: rgba(33,33,33,0.24); }
+
+/* Destructive: outline for in-page removals, solid only in a confirm dialog. */
+.pa-btn--danger-outline { background: #fff; color: var(--pa-error); border: 1px solid var(--pa-error); }
+.pa-btn--danger-outline:hover::after { background: rgba(211,47,47,0.06); }
+.pa-btn--danger { background: var(--pa-error); color: #fff; box-shadow: var(--pa-elev-2); }
+.pa-btn--danger:hover::after { background: rgba(255,255,255,0.08); }
+
+.pa-btn[disabled] { opacity: 0.3; pointer-events: none; box-shadow: none; }
+a.pa-btn, a.pa-btn:hover { text-decoration: none; }
+a.pa-btn--primary, a.pa-btn--primary:hover, a.pa-btn--danger, a.pa-btn--danger:hover { color: #fff; }
+a.pa-btn--secondary-grey, a.pa-btn--secondary-grey:hover { color: var(--pa-ink-2); }
+
+/* Rail link button — aqua, full width, left aligned, open-in-new.
+   Only for destinations outside the current page. */
+.pa-btn-rail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--pa-aqua-500);
+  color: #fff;
+  border: none;
+  border-radius: var(--pa-radius-sm);
+  padding: 11px 14px;
+  font-family: var(--pa-font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--pa-elev-2);
+}
+.pa-btn-rail:hover { filter: brightness(1.06); }
+.pa-btn-rail i { font-size: 16px; }
+
+/* Icon button — 36px circular target, 6% ink film on hover. Always titled. */
+.pa-icon-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pa-ink-2);
+  transition: background 150ms cubic-bezier(.4,0,.2,1);
+}
+.pa-icon-btn i { font-size: 19px; }
+.pa-icon-btn:hover { background: rgba(33,33,33,0.06); }
+.pa-icon-btn--sm { width: 32px; height: 32px; }
+.pa-icon-btn--primary { color: var(--pa-primary); }
+.pa-icon-btn--primary:hover { background: var(--pa-primary-04a); }
+.pa-icon-btn--danger { color: var(--pa-error); }
+.pa-icon-btn--danger:hover { background: rgba(211,47,47,0.08); }
+
+/* ================= Chips, badges, pills ======================== */
+.pa-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--pa-radius-pill);
+  font-family: var(--pa-font-display);
+  font-weight: 700;
+  font-size: 10.8px;
+  line-height: 16.2px;
+  text-transform: uppercase;
+  background: var(--pa-line-2);
+  color: var(--pa-ink);
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  isolation: isolate;
+}
+.pa-chip::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+.pa-chip > * { position: relative; z-index: 2; }
+.pa-chip--selected { background: var(--pa-primary-12a); color: var(--pa-primary); }
+.pa-chip:hover.pa-chip--selected::after { background: var(--pa-primary-04a); }
+.pa-chip:hover:not(.pa-chip--selected)::after { background: rgba(33,33,33,0.04); }
+.pa-chip[disabled] { opacity: 0.3; pointer-events: none; }
+
+/* Role badge — solid blue pill, not interactive. */
+.pa-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--pa-radius-pill);
+  background: var(--pa-primary);
+  color: #fff;
+  font-family: var(--pa-font-display);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+/* Count / tag pill — 12% tint. */
+.pa-badge--tint { background: var(--pa-primary-12a); color: var(--pa-primary); padding: 4px 11px; font-size: 10px; }
+.pa-badge--success { background: var(--pa-success); }
+
+/* Document status pill — outline, icon leads. */
+.doc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: var(--pa-radius-pill);
+  border: 1px solid var(--pa-line-2);
+  font-family: var(--pa-font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--pa-ink-3);
+  background: #fff;
+}
+.doc-pill--ok   { border-color: rgba(46,125,50,0.5);  color: var(--pa-success); background: var(--pa-success-bg); }
+.doc-pill--warn { border-color: rgba(233,143,40,0.5); color: var(--pa-warning); background: var(--pa-warning-bg); }
+.doc-pill--err  { border-color: rgba(211,47,47,0.5);  color: var(--pa-error);   background: var(--pa-error-bg); }
+
+/* Status dot + label — status is coloured text, never a filled badge. */
+.pa-status { display: inline-flex; align-items: center; gap: 7px; font-family: var(--pa-font-sans); font-size: 12.5px; }
+.pa-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: 0 0 auto; }
+.pa-status--on  { color: var(--pa-success); }
+.pa-status--off { color: var(--pa-ink-4); }
+
+/* Avatars — initials on primary-050. Green is the signed-in user only. */
+.pa-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--pa-primary-050);
+  color: var(--pa-primary);
+  font-family: var(--pa-font-display);
+  font-weight: 600;
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+.pa-avatar--overflow { background: var(--pa-line-2); color: var(--pa-ink-3); font-family: var(--pa-font-sans); font-size: 11px; }
+.pa-avatar--lg { width: 78px; height: 78px; font-size: 24px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--pa-avatar-green); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-family: var(--pa-font-sans); font-weight: 500; font-size: 12px; flex: 0 0 auto; }
+
+/* ================= Fields ======================================
+   Floating label: on the baseline when empty, rising 24px and
+   scaling to 11.5px once focused or filled. Focus is black —
+   the underline is structure, not an action. `.vf` in
+   _vuetify-inputs.css is the interactive Vuetify-accurate build;
+   `.pa-field` is the static documentation form of the same thing. */
+.pa-field { position: relative; padding-top: 18px; width: 100%; font-family: var(--pa-font-sans); }
+.pa-field__label {
+  position: absolute;
+  left: 0; top: 18px;
+  padding: 6px 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--pa-ink-3);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: transform 150ms cubic-bezier(.4,0,.2,1), color 150ms cubic-bezier(.4,0,.2,1);
+}
+.pa-field:where(:focus-within) > .pa-field__label,
+.pa-field:where(:has(.pa-field__input:not(:placeholder-shown))) > .pa-field__label,
+.pa-field:where(:has(> div:not(.pa-field__hint))) > .pa-field__label,
+.pa-field--filled > .pa-field__label { transform: translateY(-24px) scale(0.885); }
+.pa-field:focus-within > .pa-field__label { color: var(--pa-field-focus); }
+.pa-field__input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid var(--pa-field-line);
+  padding: 6px 0;
+  font-family: var(--pa-font-display);
+  font-size: 13.5px;
+  line-height: 20px;
+  color: var(--pa-ink);
+  background: transparent;
+  outline: none;
+  transition: border-color 150ms cubic-bezier(.4,0,.2,1);
+}
+.pa-field__input::placeholder { color: transparent; }
+.pa-field__input:focus { border-bottom: 2px solid var(--pa-field-focus); padding-bottom: 5px; caret-color: var(--pa-field-focus); }
+/* Boxed search and filter inputs may show a real placeholder. */
+.pa-field--hasplaceholder .pa-field__input::placeholder { color: var(--pa-ink-6); }
+.pa-field--error .pa-field__input { border-bottom-color: var(--pa-error); }
+.pa-field--error > .pa-field__label, .pa-field--error:focus-within > .pa-field__label { color: var(--pa-error); }
+.pa-field--error .pa-field__hint { color: var(--pa-error); }
+/* Read-only keeps the underline but switches it to dashed. */
+.pa-field--disabled .pa-field__input { border-bottom-style: dashed; color: var(--pa-ink-7); }
+.pa-field__hint { font-size: 12px; line-height: 18px; color: var(--pa-ink-3); padding-top: 6px; }
+/* Trailing affordance row (select chevron, date, time, chips). */
+.pa-field__control { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--pa-field-line); padding: 6px 0; }
+.pa-field__control i { font-size: 19px; color: var(--pa-ink-2); }
+.pa-field__value { flex: 1; font-family: var(--pa-font-display); font-size: 13.5px; color: var(--pa-ink); }
+.pa-field__value--empty { color: var(--pa-ink-6); }
+
+/* Boxed search — search and table filters only. */
+.search { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; background: #fff; border: 1px solid var(--pa-divider); border-radius: var(--pa-radius-sm); width: 280px; box-sizing: border-box; }
+.search input { border: none; outline: none; background: transparent; font-family: var(--pa-font-display); font-size: 13px; flex: 1; min-width: 0; color: var(--pa-ink); }
+.search input::placeholder { color: var(--pa-ink-6); }
+
+/* ================= Surfaces ==================================== */
+.pa-card { background: #fff; border: 1px solid var(--pa-divider); border-radius: var(--pa-radius-sm); box-shadow: var(--pa-elev-1); }
+.pa-card--form { box-shadow: var(--pa-elev-card); }
+.pa-card--raised { box-shadow: var(--pa-elev-raised); }
+
+/* Section band — divides one card into labelled groups.
+   Related groups become bands inside a card, never new cards. */
+.pa-band {
+  background: var(--pa-band);
+  padding: 13px 32px;
+  font-family: var(--pa-font-sans);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--pa-ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pa-band--sm { padding: 12px 16px; font-size: 16px; }
+.pa-card__body { padding: 26px 32px 28px; display: flex; flex-direction: column; gap: 24px; }
+
+/* Inline sub-panel — primary-050, opens directly under its trigger. */
+.pa-subpanel { background: var(--pa-primary-050); border-top: 1px solid var(--pa-line); padding: 16px; }
+
+/* Rule callout — the documentation voice, also used for inline guidance. */
+.pa-rules { background: var(--pa-primary-050); border-radius: var(--pa-radius-sm); padding: 16px 18px; }
+.pa-rules ul { margin: 8px 0 0; padding-left: 18px; font-family: var(--pa-font-sans); font-size: 12.5px; line-height: 19px; color: var(--pa-ink-2); }
+
+/* Dropzone — the only dashed border in the product. */
+.pa-dropzone { border: 2px dashed var(--pa-primary); border-radius: var(--pa-radius-lg); padding: 34px 20px; text-align: center; background: #fff; font-family: var(--pa-font-sans); font-size: 13.5px; }
+.pa-dropzone__hint { font-size: 12.5px; color: var(--pa-ink-3); margin-top: 5px; }
+.pa-file-row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--pa-primary); border-radius: var(--pa-radius-sm); padding: 10px 14px; font-family: var(--pa-font-sans); }
+
+/* Empty / not-migrated state. */
+.pa-empty { border: 1px solid var(--pa-line); border-radius: var(--pa-radius-sm); display: flex; flex-direction: column; align-items: center; padding: 40px 24px; text-align: center; font-family: var(--pa-font-sans); }
+.pa-empty i { font-size: 48px; color: var(--pa-ink-7); }
+.pa-empty__title { font-size: 18px; margin-top: 14px; color: var(--pa-ink); }
+.pa-empty__body { font-size: 13.5px; line-height: 20px; color: var(--pa-ink-3); margin-top: 6px; max-width: 360px; }
+
+/* ================= Tables ======================================
+   Grid table for a bounded set inside a record — never paginated.
+   List table for open-ended index screens. */
+.pa-table { border: 1px solid var(--pa-divider); border-radius: var(--pa-radius-sm); overflow: hidden; font-family: var(--pa-font-sans); }
+.pa-table__head, .pa-table__row { display: grid; align-items: center; }
+.pa-table__head { background: var(--pa-band); font-size: 12px; font-weight: 500; color: var(--pa-ink); }
+.pa-table__head > * { padding: 11px 16px; border-right: 1px solid var(--pa-divider); }
+.pa-table__head > *:last-child { border-right: none; }
+.pa-table__row { border-top: 1px solid var(--pa-line); font-size: 13px; }
+.pa-table__row > * { padding: 12px 16px; border-right: 1px solid var(--pa-line); }
+.pa-table__row > *:last-child { border-right: none; }
+.pa-table__row:hover { background: var(--pa-primary-04a); }
+
+.pa-ltable { width: 100%; border-collapse: collapse; font-family: var(--pa-font-sans); }
+.pa-ltable th { padding: 14px; text-align: left; font-size: 14px; font-weight: 400; color: var(--pa-ink); white-space: nowrap; border-top: 1px solid var(--pa-rule); border-bottom: 1px solid var(--pa-rule); }
+.pa-ltable th.sortable { cursor: pointer; user-select: none; }
+.pa-ltable td { padding: 14px; font-size: 13.5px; color: var(--pa-ink); border-bottom: 1px solid var(--pa-line); vertical-align: top; }
+.pa-ltable tbody tr:hover { background: rgba(33,33,33,0.02); }
+.pa-ltable .num { color: var(--pa-ink-2); }
+.pa-ltable .desc { font-size: 12.5px; line-height: 18px; color: var(--pa-ink-2); text-wrap: pretty; }
+.pa-ltable .acts { text-align: right; white-space: nowrap; }
+
+/* Table controls — repeat above and below a list table. */
+.pa-tablebar { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 6px 0 10px; font-family: var(--pa-font-sans); font-size: 13px; color: var(--pa-ink-2); }
+.pa-tablebar--footer { padding: 12px 0 0; border-top: 1px solid var(--pa-rule); }
+.pa-tablebar select { height: 34px; border: 1px solid var(--pa-line); border-radius: var(--pa-radius-sm); background: #fff; font-family: var(--pa-font-sans); font-size: 13px; color: var(--pa-ink); padding: 0 8px; }
+.pa-pager { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.pa-pager button { min-width: 30px; height: 30px; padding: 0 6px; border: none; border-radius: var(--pa-radius-sm); background: transparent; font-family: var(--pa-font-sans); font-size: 13px; color: var(--pa-ink-2); cursor: pointer; }
+.pa-pager button:hover { background: rgba(33,33,33,0.06); }
+.pa-pager button[aria-current="page"] { background: var(--pa-primary-12a); color: var(--pa-primary); font-weight: 500; }
+.pa-pager button[disabled] { opacity: 0.3; pointer-events: none; }
+
+/* ================= Toast ======================================= */
+.pa-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--pa-radius-sm);
+  font-family: var(--pa-font-sans);
+  font-size: 14px;
+  color: var(--pa-ink);
+  background: #fff;
+  border-left: 4px solid var(--pa-primary);
+  box-shadow: var(--pa-elev-raised);
+}
+.pa-toast--success { border-left-color: var(--pa-success); }
+.pa-toast--warning { border-left-color: var(--pa-warning); }
+.pa-toast--error   { border-left-color: var(--pa-error); }
+.pa-toast__icon { font-size: 20px; display: inline-flex; }
+.pa-toast--success .pa-toast__icon { color: var(--pa-success); }
+.pa-toast--warning .pa-toast__icon { color: var(--pa-warning); }
+.pa-toast--error   .pa-toast__icon { color: var(--pa-error); }
+.pa-toast--info    .pa-toast__icon { color: var(--pa-primary); }
+
+/* ================= App chrome ================================== */
+.topbar { height: 56px; background: #fff; border-bottom: 1px solid var(--pa-divider); display: flex; align-items: center; padding: 0 24px; gap: 16px; }
+.topbar__btn { width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--pa-ink-2); cursor: pointer; border: none; background: transparent; }
+.topbar__btn:hover { background: rgba(0,0,0,0.04); }
+
+.sb { width: 230px; flex-shrink: 0; background: var(--pa-sidebar-bg); color: #fff; font-family: var(--pa-font-sans); display: flex; flex-direction: column; }
+.sb__head { padding: 18px 14px; display: flex; align-items: center; justify-content: space-between; }
+.sb__brand { font-weight: 500; font-size: 19px; letter-spacing: 1px; color: #fff; }
+.sb__brand span { color: var(--pa-aqua-500); }
+.sb__collapse { color: rgba(255,255,255,0.6); cursor: pointer; }
+.sb__section { padding: 4px 0; }
+.sb__item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; font-size: 14px; color: rgba(255,255,255,0.9); cursor: pointer; user-select: none; }
+.sb__item i { font-size: 20px; }
+.sb__item__chev { margin-left: auto; font-size: 18px; opacity: 0.6; }
+.sb__item--active { background: var(--pa-sidebar-active); }
+.sb__item:hover:not(.sb__item--active) { background: rgba(255,255,255,0.06); }
+.sb__sub { padding: 2px 0 8px; }
+.sb__sub-item { display: flex; padding: 8px 18px 8px 54px; font-size: 13px; color: rgba(255,255,255,0.72); cursor: pointer; }
+.sb__sub-item--active { background: var(--pa-sidebar-active); color: #fff; }
+.sb__sub-item:hover:not(.sb__sub-item--active) { color: #fff; }
+
+/* Tab bar — full-width primary blue, equal-width tabs, no underline. */
+.pa-tabs { display: flex; align-items: stretch; height: 48px; background: var(--pa-primary); color: #fff; }
+.pa-tabs--sm { height: 44px; }
+.pa-tabs__btn {
+  flex: 1;
+  height: 100%;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pa-font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.pa-tabs__btn--active { background: var(--pa-primary-700); }
+.pa-tabs__btn:hover:not(.pa-tabs__btn--active) { background: rgba(255,255,255,0.06); }
+
+/* Switcher — segmented pill inside a grey track. Two variants:
+   --blue (default) for choices that change data or selection;
+   --white for passive view toggles (how something is displayed). */
+.pa-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--pa-band);
+  border-radius: 999px;
+  width: fit-content;
+  justify-self: start;
+  align-self: start;
+  isolation: isolate;
+}
+.pa-switcher__btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  height: 30px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-family: var(--pa-font-display);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pa-ink-4);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms cubic-bezier(.4,0,.2,1), color 150ms cubic-bezier(.4,0,.2,1);
+}
+.pa-switcher__btn:hover:not(.pa-switcher__btn--active) { background: rgba(33,33,33,0.05); color: var(--pa-ink-2); }
+.pa-switcher__btn:focus-visible { outline: 2px solid var(--pa-ink); outline-offset: 1px; }
+.pa-switcher__btn[disabled] { opacity: 0.35; pointer-events: none; }
+.pa-switcher--sm { padding: 2px; }
+.pa-switcher--sm .pa-switcher__btn { height: 26px; padding: 0 14px; font-size: 10.8px; }
+/* Blue: active state is a solid primary pill. */
+.pa-switcher--blue .pa-switcher__btn--active { background: var(--pa-primary); color: #fff; }
+.pa-switcher--blue .pa-switcher__btn--active:hover { background: var(--pa-primary-700); }
+/* White: active state is a raised white pill on the grey track. */
+.pa-switcher--white .pa-switcher__btn--active {
+  background: #fff;
+  color: var(--pa-ink);
+  box-shadow: var(--pa-elev-2);
+}
+
+/* Breadcrumb — sits below the tab bar, never above. */
+.pa-crumb { font-family: var(--pa-font-sans); font-size: 13px; line-height: 18px; color: var(--pa-ink-3); }
+.pa-crumb a { color: var(--pa-primary); }
+
+/* Modal scrim */
+.scrim { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+/* ---- vuetify-style inputs ---- */
+/* ============================================================
+   Shared Vuetify-style input base — underlined variant.
+   Used by fields-*.html cards (text field, textarea, combobox,
+   radio, checkbox). The active accent is #000 per brand spec.
+   ============================================================ */
+
+.vf {
+  position: relative;
+  padding-top: 18px;
+  font-family: var(--pa-font-sans);
+  color: var(--pa-ink);
+}
+
+.vf__input,
+.vf__textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+  padding: 4px 0 6px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--pa-ink);
+  outline: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  transition: border-color 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.vf__textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+.vf__input::placeholder,
+.vf__textarea::placeholder { color: rgba(0, 0, 0, 0.38); }
+.vf__input:placeholder-shown:not(:focus)::placeholder,
+.vf__textarea:placeholder-shown:not(:focus)::placeholder { color: transparent; }
+
+.vf__label {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transform-origin: top left;
+  transition: transform 200ms cubic-bezier(.4, 0, .2, 1),
+              color 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.vf__input:focus ~ .vf__label,
+.vf__input:not(:placeholder-shown) ~ .vf__label,
+.vf__textarea:focus ~ .vf__label,
+.vf__textarea:not(:placeholder-shown) ~ .vf__label {
+  transform: translateY(-18px) scale(0.857);
+}
+.vf__input:focus,
+.vf__textarea:focus,
+.vf--focused .vf__input,
+.vf--focused .vf__textarea {
+  border-bottom: 2px solid #000;
+  padding-bottom: 5px;
+  caret-color: #000;
+}
+.vf__input:focus ~ .vf__label,
+.vf__textarea:focus ~ .vf__label,
+.vf--focused .vf__label {
+  transform: translateY(-18px) scale(0.857);
+  color: #000;
+}
+
+.vf__messages {
+  min-height: 14px;
+  padding: 4px 0 0;
+  font-size: 12px;
+  line-height: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+.vf__counter { float: right; font-size: 12px; color: rgba(0, 0, 0, 0.6); padding-top: 4px; }
+
+/* Error */
+.vf--error .vf__input,
+.vf--error .vf__textarea,
+.vf--error .vf__input:focus,
+.vf--error .vf__textarea:focus { border-bottom-color: var(--pa-error); }
+.vf--error .vf__label,
+.vf--error .vf__input:focus ~ .vf__label,
+.vf--error .vf__textarea:focus ~ .vf__label { color: var(--pa-error); }
+.vf--error .vf__messages { color: var(--pa-error); }
+
+/* Disabled */
+.vf--disabled .vf__input,
+.vf--disabled .vf__textarea {
+  color: rgba(0, 0, 0, 0.38);
+  border-bottom-style: dotted;
+  border-bottom-color: rgba(0, 0, 0, 0.38);
+  pointer-events: none;
+}
+.vf--disabled .vf__label { color: rgba(0, 0, 0, 0.38); }
+
+/* Trailing icon (eye, dropdown chevron, etc.)
+   Sits at the input baseline, clear of the underline. */
+.vf__input--with-icon,
+.vf__textarea--with-icon { padding-right: 28px; }
+.vf__icon {
+  position: absolute;
+  right: 0;
+  top: 22px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.vf__icon:hover { color: #000; }
+
+/* ============================================================
+   Selection controls — radio + checkbox
+   ============================================================ */
+
+.vsel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-family: var(--pa-font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--pa-ink);
+  cursor: pointer;
+  user-select: none;
+}
+.vsel input { position: absolute; opacity: 0; pointer-events: none; }
+.vsel__box {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.6);
+  transition: color 150ms cubic-bezier(.4, 0, .2, 1);
+}
+.vsel__box i { font-size: 20px; }
+.vsel:hover .vsel__box { color: #000; }
+.vsel input:checked + .vsel__box { color: #000; }
+.vsel input:disabled ~ .vsel__box,
+.vsel--disabled .vsel__box { color: rgba(0, 0, 0, 0.26) !important; }
+.vsel--disabled,
+.vsel input:disabled ~ .vsel__label { color: rgba(0, 0, 0, 0.38); pointer-events: none; }
+
+/* Radio / checkbox groups */
+.vgroup { display: flex; gap: 4px 24px; flex-wrap: wrap; }
+.vgroup--inline { flex-direction: row; align-items: center; }
+.vgroup--stacked { flex-direction: column; gap: 2px; }
+
+.vgroup__legend {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   Switch / Toggle — Vuetify v-switch default variant
+   Thin track with a larger thumb that protrudes above/below.
+   Off: grey track + white thumb.
+   On:  light-green tinted track + full success-green thumb.
+   ============================================================ */
+.vsw {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  font-family: var(--pa-font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--pa-ink);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+.vsw input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  inset: 0;
+}
+.vsw__track {
+  position: relative;
+  width: 36px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.38);
+  border-radius: 7px;
+  flex-shrink: 0;
+  transition: background 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.vsw__thumb {
+  position: absolute;
+  top: -3px;          /* protrudes above the track */
+  left: -1px;         /* protrudes slightly past the track at rest */
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2),
+              0 1px 1px 0 rgba(0,0,0,0.14),
+              0 1px 3px 0 rgba(0,0,0,0.12);
+  transition: transform 200ms cubic-bezier(.4, 0, .2, 1),
+              background 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.vsw input:checked + .vsw__track { background: rgba(46, 125, 50, 0.5); }
+.vsw input:checked + .vsw__track .vsw__thumb {
+  transform: translateX(18px);
+  background: var(--pa-success);
+}
+.vsw:hover .vsw__track { background: rgba(0, 0, 0, 0.5); }
+.vsw:hover input:checked + .vsw__track { background: rgba(46, 125, 50, 0.6); }
+
+.vsw input:disabled + .vsw__track,
+.vsw--disabled .vsw__track { background: rgba(0, 0, 0, 0.18) !important; }
+.vsw input:disabled:checked + .vsw__track,
+.vsw--disabled input:checked + .vsw__track { background: rgba(46, 125, 50, 0.28) !important; }
+.vsw input:disabled:checked + .vsw__track .vsw__thumb,
+.vsw--disabled input:checked + .vsw__track .vsw__thumb { background: rgba(46, 125, 50, 0.6) !important; }
+.vsw input:disabled ~ .vsw__label,
+.vsw--disabled { color: rgba(0, 0, 0, 0.38); pointer-events: none; }
+
+
+/* ---- page-local styles ---- */
+body { margin: 0; background: #fff; }
+a { color: var(--pa-primary); text-decoration: underline; }
+a:hover { color: var(--pa-primary-700); }
+.em-link { color: var(--pa-primary); text-decoration: underline; }
+.app { display: flex; height: 100vh; overflow: hidden; font-family: var(--pa-font-sans); color: var(--pa-ink); background: #fff; }
+.col-head { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pa-ink-6); font-weight: 500; padding: 0 0 12px; text-align: center; }
+.board { display: grid; grid-template-columns: repeat(4, minmax(240px, 1fr)); gap: 16px; border-top: 1px solid var(--pa-divider); padding-top: 16px; }
+.board__col { border-right: 1px solid var(--pa-divider); padding-right: 16px; min-height: 240px; }
+.ncard { border: 1px solid var(--pa-divider); border-radius: 4px; background: #fff; box-shadow: var(--pa-elev-1); margin-bottom: 12px; overflow: hidden; }
+.ncard__head { color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ncard__body { padding: 12px 14px; }
+.ncard__when { font-size: 11px; color: var(--pa-ink-3); margin-bottom: 6px; }
+.ncard__acts { display: flex; align-items: center; gap: 4px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--pa-line); }
+.pane-tab { border: none; background: transparent; padding: 16px 2px 13px; border-bottom: 3px solid transparent; font-family: var(--pa-font-sans); font-weight: 500; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--pa-ink); cursor: pointer; }
+.pane-tab--on { border-bottom-color: var(--pa-primary); color: var(--pa-primary); }
+.rte-bar { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; padding: 6px 0 4px; }
+.rte-body { min-height: 56px; border-top: 1px solid var(--pa-line); border-bottom: 1px solid var(--pa-field-line); padding: 10px 2px; font-family: var(--pa-font-display); font-size: 13.5px; line-height: 20px; color: var(--pa-ink); outline: none; }
+.tzscale { display: flex; justify-content: space-between; margin-top: 4px; }
+.tzscale span { font-family: var(--pa-font-sans); font-size: 13.5px; line-height: 20px; color: var(--pa-ink-2); }
+.modal { background: #fff; border-radius: var(--pa-radius-lg); box-shadow: var(--pa-elev-modal); }
+.modal__foot { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 26px; }
+.fields { display: flex; flex-direction: column; gap: 26px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 40px; }
+.app-footer { text-align: center; padding: 22px; font-family: var(--pa-font-sans); font-size: 13px; font-weight: 700; color: var(--pa-ink); border-top: 1px solid var(--pa-divider); background: #fff; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   PRIME Admin 3 — Notifications (Confirmation / Reminders /
+   Follow-Ups / Settings). Plain HTML + CSS + JS, no framework.
+   ============================================================ */
+
+/* ---------------- data ---------------- */
+
+var TAGS = [
+  ["subject", "Live Webinar Registration Confirmation"],
+  ["custom_message_one", ""],
+  ["abbreviated_title", "", "err"],
+  ["connected_flag", "false"],
+  ["related_activity_title", ""],
+  ["related_activity_url", ""],
+  ["related_activity_code", ""],
+  ["claim_credit_url", "https://primeinc.org/evaluation/72WC2612"],
+  ["presentation_download_link", "https://primeinc.org/go/download-72WC2612/media.primeinc.org/upload/programs/72WC2612/Triage_Thinking_and_Task_Shifting_to_Scale_PrEP.pdf"],
+  ["custom_message_two", ""],
+  ["title", "Triage Thinking and Task Shifting to Scale PrEP With Limited Capacity", "ok"],
+  ["program_date", "Thursday, August 27, 2026"],
+  ["program_time_cst", "1:00 PM, Central Time"],
+  ["program_time_est", "2:00 PM, Eastern Time"],
+  ["program_time_mst", "12:00 PM, Mountain Time"],
+  ["program_time_pst", "11:00 AM, Pacific Time"],
+  ["activity_type", "Live Webinar"],
+  ["venue_address", ""],
+  ["venue_name", ""],
+  ["program_agenda", "I.  At the Frontlines: Keys to Success in Normalizing Sexual Health and HIV Prevention Discussions\n\nII. Opportunities to Align Clinical Practice With Evidence-Based PrEP Strategies\n\nIII.  Leveraging Local Partnerships and Stakeholder Engagement to Expand Capacity", "ok"],
+  ["button", "Start Live Webinar"],
+  ["course_url", "https://primeinc.org/virtual/triage-thinking-task-shifting-scale-prep-limited-capacity"],
+  ["join_url", "https://www.bigmarker.com/conferences/10c5c6e04c44"],
+  ["dr_type", ""],
+  ["sponsor", "This activity is provided by PRIME Education. There is no fee to participate. This activity is supported by independent educational grants from Merck Sharp & Dohme LLC, Gilead Sciences, Inc., and ViiV Healthcare.", "ok"],
+  ["accredited", "true"],
+  ["ActivityCode", "72WC2612"],
+  ["event_timeZone", "America/New_York"],
+  ["platformType", "primebigmarker"],
+  ["activity_medium", ""],
+  ["audience_type", ""],
+  ["program_info_block", "Thursday, August 27, 2026 at 2:00 PM, Eastern Time / 11:00 AM, Pacific Time"],
+  ["button_url", "https://primeinc.org/virtual/triage-thinking-task-shifting-scale-prep-limited-capacity"],
+  ["button_label", "Start Live Webinar"],
+  ["location", ""],
+  ["conference_registration", ""],
+  ["registration_verbiage", "Sample : You must be registered for XXXX to attend in person. You can Register Here."],
+  ["meal_dinner", ""],
+  ["enduring_title", ""],
+  ["meal_lunch", ""],
+  ["meal_breakfast", ""],
+  ["meal_refreshments", ""],
+  ["meals_served", ""],
+  ["meal_verbiage_two", ""],
+  ["meal_verbiage_one", ""],
+  ["credit_amount", ""],
+  ["image", "https://media.primeinc.org/images/courses/email/72WC2612.jpg"],
+  ["overview", "Frontline healthcare professionals are well poised to deliver HIV pre-exposure prophylaxis (PrEP) to the communities they serve, yet shifting public health priorities and funding uncertainties have made it more challenging to implement and sustain HIV prevention.", "ok"],
+  ["event_time", "2:00 PM, Eastern Time"],
+  ["parking", ""],
+  ["program_date_est", "Thursday, August 27, 2026"],
+  ["cme_nomenclature", "CME/CE"],
+  ["telq_test_id", ""]
+];
+
+var BOARD = [
+  { key: "scheduled", title: "Scheduled", cards: [
+    { channel: "Email", when: "Thursday, Sep 17, 2026 at 11:45 PM EDT", text: "EVENT REMINDER: Don't forget to join us Next Week for {{ title }} for which you" },
+    { channel: "Email", when: "Tuesday, Sep 22, 2026 at 11:45 PM EDT", text: "Re: This is your 48 HOUR REMINDER that you are scheduled to attend {{ title }}" },
+    { channel: "SMS", when: "Tuesday, Sep 22, 2026 at 11:45 PM EDT", text: "{{ telq_test_id }} This is your 48 HOUR REMINDER for the PRIME Live {{ cme_nomenclature }} Event" },
+    { channel: "Email", when: "Wednesday, Sep 23, 2026 at 11:45 PM EDT", text: "REMINDER! Happening Live Tomorrow: {{ title }}" },
+    { channel: "Email", when: "Thursday, Sep 24, 2026 at 11:15 PM EDT", text: "GET READY! Starting in 30 Minutes: {{ title }}" },
+    { channel: "SMS", when: "Thursday, Sep 24, 2026 at 11:15 PM EDT", text: "{{ telq_test_id }} GET READY! Starting in just 30 minutes - PRIME Live {{ cme_no..." },
+    { channel: "Email", label: "Post-Event Thank You", when: "Friday, Sep 25, 2026 at 11:45 PM EDT", text: "Thank You" }
+  ] },
+  { key: "sending", title: "Sending", cards: [
+    { channel: "SMS", when: "Wednesday, Sep 16, 2026 at 11:45 PM EDT", text: "{{ telq_test_id }} REMINDER! Happening Live Tomorrow - PRIME {{ cme_nomenclature }} Event" }
+  ] },
+  { key: "suspended", title: "Suspended", cards: [] },
+  { key: "sent", title: "Sent", cards: [
+    { channel: "Email", when: "Wednesday, Sep 9, 2026 at 11:45 PM EDT", text: "SAVE THE DATE: You're registered for {{ title }}" },
+    { channel: "SMS", when: "Wednesday, Sep 9, 2026 at 11:45 PM EDT", text: "This is your 1 WEEK REMINDER for the PRIME Live {{ cme_nomenclature }} Event you", error: "9 permanent failure(s) — 22 recipients opted out" }
+  ] }
+];
+
+var FU_CODES = [
+  { code: "12WB123", tint: "#2E6094" },
+  { code: "12WB124", tint: "#3F5F70" },
+  { code: "12WB125", tint: "#5E6B5A" },
+  { code: "12WB126", tint: "#6E6234" }
+];
+
+var FU_BOARD = [
+  { key: "scheduled", title: "Scheduled", cards: [
+    { code: "12WB123", when: "Thursday, January 22nd, 2026", text: "We Missed You" },
+    { code: "12WB124", when: "Monday, February 2nd, 2026", text: "We Missed You" },
+    { code: "12WB125", when: "Friday, February 13th, 2026", text: "We Missed You" },
+    { code: "12WB126", when: "Thursday, January 29th, 2026", text: "Here's Your Second Chance!" },
+    { code: "12WB123", when: "Monday, February 9th, 2026", text: "Here's Your Second Chance!" },
+    { code: "12WB124", when: "Friday, February 20th, 2026", text: "Here's Your Second Chance!" },
+    { code: "12WB125", when: "Thursday, February 5th, 2026", text: "We Want You Back!" },
+    { code: "12WB126", when: "Monday, February 16th, 2026", text: "We Want You Back!" },
+    { code: "12WB123", when: "Friday, February 27th, 2026", text: "We Want You Back!" },
+    { code: "12WB124", when: "Thursday, February 12th, 2026", text: "One Last Look" },
+    { code: "12WB125", when: "Monday, February 23rd, 2026", text: "One Last Look" },
+    { code: "12WB126", when: "Friday, March 6th, 2026", text: "One Last Look" },
+    { code: "12WB123", when: "Thursday, February 19th, 2026", text: "Still Time to Earn Credit" },
+    { code: "12WB124", when: "Monday, March 2nd, 2026", text: "Still Time to Earn Credit" },
+    { code: "12WB125", when: "Friday, March 13th, 2026", text: "Still Time to Earn Credit" },
+    { code: "12WB126", when: "Thursday, February 26th, 2026", text: "Your Activity Closes Soon" }
+  ] },
+  { key: "sending", title: "Sending", cards: [] },
+  { key: "suspended", title: "Suspended", cards: [] },
+  { key: "sent", title: "Sent", cards: [] }
+];
+
+var TAB_LABELS = { confirmation: "Confirmation", reminders: "Reminders", followups: "Follow-Ups", settings: "Settings" };
+var TAB_ORDER = ["confirmation", "reminders", "followups", "settings"];
+
+/* ---------------- state ---------------- */
+
+var S = {
+  tab: "confirmation",
+  view: "preview",          // confirmation card: preview | tags
+  type: "single",
+  editing: false,
+  dirty: false,
+  discard: null,            // pending tab change
+  cancelPending: false,
+  chanFilters: [],          // [] = show all
+  fuCodes: [],              // [] = show all
+  suspended: [],
+  fuSuspended: [],
+  suspending: null,
+  testOpen: false,
+  testEmails: "",
+  editOpen: false,
+  editView: "preview",
+  editChannel: "Email",
+  editText: "",
+  editWhen: "",
+  editTz: 3,
+  cloneOpen: false,
+  cloneMode: "clone",
+  cloneChannel: "Email",
+  cloneSubject: "",
+  cloneButtonLabel: "{{button_label}}",
+  cloneButtonUrl: "{{button_url}}",
+  cloneTz: 3,
+  disableConf: false,
+  tz: 3,
+  subject: "{{activity_type}} Registration Confirmation",
+  btnLabel: "{{button_label}}",
+  btnUrl: "{{button_url}}",
+  confReg: false,
+  meals: false,
+  meal: null,
+  regText: "Sample : You must be registered for XXXX to attend in person. You can Register Here.",
+  mealOne: "Sample : Meals will be provided during the event.",
+  mealTwo: "Sample : Meals will be provided during the event."
+};
+
+function set(patch) { Object.assign(S, patch); render(); }
+function edit(patch) { patch.dirty = true; set(patch); }
+function flip(list, key) {
+  return list.indexOf(key) > -1 ? list.filter(function (k) { return k !== key; }) : list.concat([key]);
+}
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function fmtDate(when) {
+  var m = /([A-Za-z]{3})[a-z]* (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})/.exec(when || "");
+  if (!m) return "09/17/2026";
+  var mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(m[1]) + 1;
+  return String(mm).padStart(2, "0") + "/" + String(m[2]).padStart(2, "0") + "/" + m[3];
+}
+function fmtTime(when) {
+  var m = /(\d{1,2}:\d{2}\s?(?:AM|PM))/i.exec(when || "");
+  return m ? m[1].toUpperCase() : "11:45 PM";
+}
+function noun() { return S.tab === "followups" ? "Follow-Up" : "Reminder"; }
+function templateName() {
+  return S.tab === "followups" ? "Prime Enduring Follow-Up - Non-Completer" : "Prime Transactional Reminder - Live Event - Onsite";
+}
+
+/* ---------------- small view helpers ---------------- */
+
+function btn(label, variant, act, opts) {
+  opts = opts || {};
+  var icon = opts.icon ? '<i class="mdi mdi-' + opts.icon + '"></i>' : "";
+  return '<button class="pa-btn pa-btn--' + variant + (opts.sm ? " pa-btn--sm" : "") + '"' +
+    (act ? ' data-act="' + act + '"' : "") +
+    (opts.arg ? ' data-arg="' + esc(opts.arg) + '"' : "") +
+    (opts.style ? ' style="' + opts.style + '"' : "") + '>' + icon + '<span>' + esc(label) + '</span></button>';
+}
+function chip(label, on, act, arg) {
+  return '<button class="pa-chip' + (on ? " pa-chip--selected" : "") + '" data-act="' + act + '"' +
+    (arg ? ' data-arg="' + esc(arg) + '"' : "") + '><span>' + esc(label) + '</span></button>';
+}
+function field(label, value, act, opts) {
+  opts = opts || {};
+  return '<div class="pa-field pa-field--filled' + (opts.cls ? " " + opts.cls : "") + '"' + (opts.style ? ' style="' + opts.style + '"' : "") + '>' +
+    '<label class="pa-field__label">' + esc(label) + '</label>' +
+    (opts.textarea
+      ? '<textarea class="pa-field__input" rows="4" style="resize:vertical; line-height:20px" data-set="' + act + '">' + esc(value) + '</textarea>'
+      : '<input class="pa-field__input" value="' + esc(value) + '" data-set="' + act + '"' + (opts.disabled ? " disabled" : "") + '>') +
+    '</div>';
+}
+function readField(label, value, opts) {
+  opts = opts || {};
+  return '<div class="pa-field pa-field--filled' + (opts.dashed ? " pa-field--disabled" : "") + '">' +
+    '<label class="pa-field__label">' + esc(label) + '</label>' +
+    '<div class="pa-field__control"' + (opts.dashed ? ' style="border-bottom-style:dashed"' : "") + '>' +
+    '<span class="pa-field__value" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap' + (opts.dashed ? "; color:var(--pa-ink-6)" : "") + (opts.muted ? "; color:var(--pa-ink-4)" : "") + '">' + esc(value) + '</span>' +
+    '<i class="mdi mdi-' + (opts.icon || "menu-down") + '"' + (opts.icon ? ' style="font-size:17px"' : "") + '></i></div></div>';
+}
+function tzSlider(value, act) {
+  return '<div><div class="pa-field-label" style="margin-bottom:10px">Time zone</div>' +
+    '<input type="range" min="0" max="3" step="1" value="' + value + '" data-set="' + act + '" style="width:100%; accent-color:var(--pa-primary)">' +
+    '<div class="tzscale"><span>PT</span><span>MT</span><span>CT</span><span>ET</span></div></div>';
+}
+var RTE_BUTTONS = [
+  ["undo", "Undo"], ["redo", "Redo"], ["format-quote-close", "Quote"], ["link-variant", "Link"],
+  ["format-underline", "Underline"], ["format-strikethrough", "Strikethrough"], ["format-italic", "Italic"],
+  ["format-bold", "Bold"], ["format-align-left", "Align left"], ["format-list-bulleted", "Bulleted list"],
+  ["format-list-numbered", "Numbered list"], ["minus", "Horizontal rule"],
+  ["format-indent-increase", "Indent"], ["format-indent-decrease", "Outdent"]
+];
+function rte(label) {
+  var bar = RTE_BUTTONS.map(function (b) {
+    return '<button class="pa-icon-btn pa-icon-btn--sm" title="' + b[1] + '"' + (b[0] === "format-align-left" ? ' style="background:rgba(33,33,33,0.08)"' : "") +
+      '><i class="mdi mdi-' + b[0] + '" style="font-size:17px"></i></button>';
+  }).join("");
+  return '<div><div class="pa-field-label" style="font-size:11.5px">' + esc(label) + '</div>' +
+    '<div class="rte-bar">' + bar + '</div><div class="rte-body" contenteditable="true"></div></div>';
+}
+function tagRows() {
+  return TAGS.map(function (t) {
+    var status = t[2] || (t[1] ? "" : "empty");
+    var icon = status === "ok" ? '<i class="mdi mdi-file-document-check-outline" style="font-size:20px; color:var(--pa-success)"></i>'
+      : status === "err" ? '<i class="mdi mdi-file-document-remove-outline" style="font-size:20px; color:var(--pa-error)"></i>'
+      : t[1] ? '<i class="mdi mdi-file-document-check-outline" style="font-size:20px; color:var(--pa-success)"></i>'
+      : '<i class="mdi mdi-cancel" style="font-size:20px; color:var(--pa-ink-7)"></i>';
+    return '<div style="display:grid; grid-template-columns:64px 1fr; gap:0 16px; align-items:start; padding:11px 0; border-bottom:1px solid var(--pa-line)">' +
+      '<div style="display:flex; align-items:center; justify-content:center; height:24px">' + icon + '</div>' +
+      '<div style="min-width:0; display:flex; flex-direction:column; gap:3px">' +
+      (t[1] ? '<div class="pa-body-13" style="color:var(--pa-ink-2); white-space:pre-line; overflow-wrap:anywhere; text-wrap:pretty">' + esc(t[1]) + '</div>' : "") +
+      '<div style="font-family:var(--pa-font-display); font-weight:700; font-size:12.5px; line-height:18px; color:var(--pa-ink); overflow-wrap:anywhere">{{ ' + esc(t[0]) + ' }}</div>' +
+      '</div></div>';
+  }).join("");
+}
+function tagTable(pad) {
+  return '<div style="padding:' + pad + '">' +
+    '<div style="display:grid; grid-template-columns:64px 1fr; gap:0 16px; align-items:center; padding-bottom:8px; border-bottom:1px solid var(--pa-rule)">' +
+    '<div class="pa-body-13" style="color:var(--pa-ink-3)">Status</div><div class="pa-body-13" style="color:var(--pa-ink-3)">Tag</div></div>' +
+    tagRows() + '</div>';
+}
+
+/* ---------------- chrome ---------------- */
+
+function sidebar() {
+  var items = [
+    ["account-box-outline", "Program Management", false],
+    ["chart-line", "Marketing", true],
+    ["view-dashboard", "Outcomes", false],
+    ["chart-box", "Reporting", false],
+    ["tools", "Tools", false],
+    ["account-key", "User Manager", false]
+  ];
+  return '<nav class="sb" style="overflow-y:auto">' +
+    '<div class="sb__head"><img src="logo-rev.svg" alt="PRIME ADMIN" style="height:22px"><i class="mdi mdi-chevron-left sb__collapse"></i></div>' +
+    items.map(function (it) {
+      var sub = it[2] ? '<div class="sb__sub"><div class="sb__sub-item sb__sub-item--active">Notifications</div><div class="sb__sub-item">Newsletters</div></div>' : "";
+      return '<div class="sb__section"><div class="sb__item' + (it[2] ? " sb__item--active" : "") + '">' +
+        '<i class="mdi mdi-' + it[0] + '"></i><span>' + it[1] + '</span>' +
+        '<i class="mdi mdi-chevron-' + (it[2] ? "up" : "down") + ' sb__item__chev"></i></div>' + sub + '</div>';
+    }).join("") + '</nav>';
+}
+
+function topbar() {
+  return '<header class="topbar">' +
+    '<div class="search" style="flex:1; width:auto; height:40px"><input placeholder="Search for [Project]">' +
+    '<i class="mdi mdi-magnify" style="color:var(--pa-ink-6); font-size:18px"></i></div>' +
+    '<button class="pa-btn pa-btn--primary"><i class="mdi mdi-plus"></i><span>Create</span></button>' +
+    '<button class="topbar__btn" title="Notifications" style="position:relative">' +
+    '<i class="mdi mdi-bell-outline" style="font-size:22px; color:var(--pa-ink-3)"></i>' +
+    '<span style="position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 4px; box-sizing:border-box; border-radius:8px; background:var(--pa-error); color:#fff; font-size:10px; font-weight:500; line-height:16px">2</span></button>' +
+    '<div class="avatar" title="Douglas Benjamin">DB</div></header>';
+}
+
+function pageHeader() {
+  var right = "";
+  if (S.tab === "reminders") right += btn("Create Reminder", "primary", "openCreate", { icon: "plus" });
+  if (S.tab === "followups") right += btn("Create Follow-Up", "primary", "openCreate", { icon: "plus" });
+  if (S.tab === "confirmation" && !S.editing) right += btn("Send Test", "secondary", "openTest");
+  if ((S.tab === "confirmation" || S.tab === "settings") && !S.editing) right += btn("Edit", "primary", "startEdit", { icon: "pencil-outline" });
+  if ((S.tab === "confirmation" || S.tab === "settings") && S.editing) {
+    right += btn("Cancel", "secondary-grey", "requestCancel") + btn("Save", "primary", "saveEdit");
+  }
+  return '<div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 32px 14px">' +
+    '<h1 class="pa-page-title">Notifications</h1>' +
+    '<div style="display:flex; align-items:center; gap:8px">' + right + '</div></div>';
+}
+
+function tabs() {
+  return '<div style="flex:none"><div class="pa-tabs">' + TAB_ORDER.map(function (k) {
+    return '<button class="pa-tabs__btn' + (k === S.tab ? " pa-tabs__btn--active" : "") + '" data-act="setTab" data-arg="' + k + '">' + TAB_LABELS[k] + '</button>';
+  }).join("") + '</div></div>';
+}
+
+/* ---------------- confirmation tab ---------------- */
+
+function emailPreview() {
+  return '<div style="background:var(--pa-band); padding:32px">' +
+  '<div style="max-width:720px; margin:0 auto; background:#fff; border:1px solid var(--pa-divider); border-radius:var(--pa-radius-sm)">' +
+  '<div style="display:flex; align-items:center; justify-content:center; gap:14px; padding:34px 32px 30px; border-bottom:1px solid var(--pa-line)">' +
+  '<span style="flex:0 0 90px; height:2px; background:linear-gradient(90deg, rgba(0,173,238,0), var(--pa-aqua-500))"></span>' +
+  '<span style="flex:0 0 auto; white-space:nowrap; font-family:var(--pa-font-display); font-weight:300; font-size:34px; letter-spacing:1px; color:var(--pa-ink)">PRIME<span style="color:var(--pa-aqua-500); font-weight:400">&#8202;LIVE</span></span>' +
+  '<span style="flex:0 0 90px; height:2px; background:linear-gradient(90deg, var(--pa-aqua-500), rgba(0,173,238,0))"></span></div>' +
+  '<div style="padding:30px 44px 40px; display:flex; flex-direction:column; gap:20px">' +
+  '<div style="display:flex; align-items:center; justify-content:center; gap:14px; padding-bottom:6px">' +
+  '<i class="mdi mdi-account-group-outline" style="font-size:34px; color:var(--pa-primary)"></i>' +
+  '<span style="font-family:var(--pa-font-display); font-weight:300; font-size:28px; letter-spacing:1.5px; text-transform:uppercase; color:var(--pa-ink)">Virtual Event</span></div>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">Thank you for registering for PRIME\'s <a class="em-link" href="#activity">Triage Thinking and Task Shifting to Scale PrEP With Limited Capacity</a></p>' +
+  '<p class="pa-body-16" style="margin:0; color:var(--pa-ink-2)">Thursday, August 27, 2026 at 2:00 PM Eastern Time / 11:00 AM Pacific Time</p>' +
+  '<p class="pa-body-16" style="margin:0">At the time of the event, please click <a class="em-link" href="#join">here</a>.</p>' +
+  '<hr style="border:none; border-top:1px solid var(--pa-line); margin:8px 0">' +
+  '<div style="display:flex; flex-direction:column; gap:14px"><div class="pa-eyebrow">Program Agenda</div>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">I. At the Frontlines: Keys to Success in Normalizing Sexual Health and HIV Prevention Discussions</p>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">II. Opportunities to Align Clinical Practice With Evidence-Based PrEP Strategies</p>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">III. Leveraging Local Partnerships and Stakeholder Engagement to Expand Capacity</p></div>' +
+  '<hr style="border:none; border-top:1px solid var(--pa-line); margin:8px 0">' +
+  '<div style="display:flex; flex-direction:column; gap:14px"><div class="pa-eyebrow">Before Attending</div>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">We recommend using the latest version of Chrome, Firefox, Opera, or Safari to get the most out of your virtual event.</p>' +
+  '<div style="display:flex; align-items:center; gap:28px; padding:18px 0; color:var(--pa-ink-3)">' +
+  '<i class="mdi mdi-google-chrome" style="font-size:34px"></i><i class="mdi mdi-firefox" style="font-size:34px"></i>' +
+  '<i class="mdi mdi-opera" style="font-size:34px"></i><i class="mdi mdi-apple-safari" style="font-size:34px"></i></div>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">Before the program, please run the <a class="em-link" href="#systems-check">systems check</a> to confirm your device is ready.</p></div></div>' +
+  '<div style="border-top:1px solid var(--pa-line); padding:18px 44px 26px; text-align:center"><div class="pa-caption">1997&ndash;2026 PRIME Education, LLC</div></div>' +
+  '</div></div>';
+}
+
+function confirmationEditForm() {
+  return '<div class="fields" style="min-width:0">' +
+    readField("Reminder type", "Email", { dashed: true }) +
+    readField("Sailthru Template", "22") +
+    '<div class="pair">' + readField("Send On", "08/27/2026", { icon: "calendar-blank-outline" }) + readField("Send At", "02:00 PM", { icon: "clock-outline" }) + '</div>' +
+    tzSlider(S.tz, "tz") +
+    field("Subject line", S.subject, "subject") +
+    rte("Custom Message one (HTML)") +
+    rte("Custom Message two (HTML)") +
+    field("Button label", S.btnLabel, "btnLabel") +
+    field("Button URL", S.btnUrl, "btnUrl") +
+    '<div class="pa-field"><label class="pa-field__label">Promoted Activity</label><input class="pa-field__input" placeholder=" "></div>' +
+    '</div>';
+}
+
+function statCard(key, value, caption, color) {
+  return '<div class="pa-card"><div style="padding:18px 20px"><div class="pa-meta-key">' + key + '</div>' +
+    '<div style="font-family:var(--pa-font-display); font-size:28px; line-height:36px; font-weight:500; color:' + color + '">' + value + '</div>' +
+    '<div class="pa-caption">' + caption + '</div></div></div>';
+}
+
+function confirmationTab() {
+  var onPreview = S.view === "preview";
+  var card = '<div class="pa-card pa-card--form">' +
+    '<div style="display:flex; align-items:stretch; gap:28px; padding:0 24px; border-bottom:1px solid var(--pa-line)">' +
+    '<button class="pane-tab' + (onPreview ? " pane-tab--on" : "") + '" data-act="setView" data-arg="preview">Email Preview</button>' +
+    '<button class="pane-tab' + (!onPreview ? " pane-tab--on" : "") + '" data-act="setView" data-arg="tags">Template Tags</button></div>' +
+    (onPreview ? emailPreview() : tagTable("22px 32px 32px")) + '</div>';
+
+  var rail = S.editing ? "" : '<div style="display:flex; flex-direction:column; gap:14px">' +
+    '<h3 class="pa-rail-title">Email Stats</h3>' +
+    statCard("Sent to", "2", "unique recipients", "var(--pa-ink)") +
+    statCard("Delivery rate", "100%", "2 of 2 delivered", "var(--pa-success)") +
+    statCard("Bounce rate", "0%", "0 of 0 bounced", "var(--pa-ink)") + '</div>';
+
+  var disable = S.editing ? '<label class="vsel" style="margin-top:18px; gap:10px">' +
+    '<input type="checkbox"' + (S.disableConf ? " checked" : "") + ' data-set="disableConf">' +
+    '<span class="vsel__box"><i class="mdi mdi-' + (S.disableConf ? "checkbox-marked" : "checkbox-blank-outline") + '"></i></span>' +
+    '<span class="pa-body-14">Disable Confirmation for this event</span></label>' : "";
+
+  return '<div><h2 class="pa-screen-title">' + (S.editing ? "Edit Confirmation" : "Confirmation") + ' (72WC2612)</h2>' + disable +
+    '<div style="display:flex; align-items:center; gap:14px; margin:20px 0 24px">' +
+    '<span class="pa-eyebrow" style="color:var(--pa-ink-3)">Confirmation Type</span>' +
+    '<div style="display:flex; align-items:center; gap:8px">' +
+    chip("Single", S.type === "single", "setType", "single") + chip("Multi-Reg", S.type === "multi", "setType", "multi") + '</div></div>' +
+    '<div style="display:grid; grid-template-columns:' + (S.editing ? "1fr 1fr" : "3fr 1fr") + '; gap:28px; align-items:start">' +
+    (S.editing ? confirmationEditForm() : "") + card + rail + '</div></div>';
+}
+
+/* ---------------- boards ---------------- */
+
+function cardActions(scope, id, opts) {
+  return '<div class="ncard__acts">' +
+    (opts.canSuspend ? btn("Suspend", "tertiary", "askSuspend", { sm: true, arg: scope + ":" + id, style: "color:var(--pa-error)" }) : "") +
+    '<div style="flex:1"></div>' +
+    btn("Clone", "tertiary", "openClone", { sm: true, arg: scope + ":" + id }) +
+    (opts.canTest ? btn("Test", "tertiary", "openTest", { sm: true }) : "") +
+    (opts.canEdit ? btn("Edit", "tertiary", "openEdit", { sm: true, arg: scope + ":" + id }) : "") +
+    '</div>';
+}
+
+function remindersBoard() {
+  var chan = S.chanFilters;
+  var all = [];
+  BOARD.forEach(function (col) {
+    col.cards.forEach(function (c, i) { all.push(Object.assign({}, c, { id: col.key + i, col: col.key })); });
+  });
+  return BOARD.map(function (col) {
+    var pool = col.key === "suspended"
+      ? all.filter(function (c) { return S.suspended.indexOf(c.id) > -1; })
+      : all.filter(function (c) { return c.col === col.key && S.suspended.indexOf(c.id) < 0; });
+    var cards = pool.filter(function (c) { return chan.length === 0 || chan.indexOf(c.channel) > -1; });
+    var body = cards.map(function (c) {
+      var isEmail = c.channel === "Email";
+      return '<div class="ncard"><div class="ncard__head" style="background:' + (isEmail ? "#7B1FA2" : "#00796B") + '"><span>' + esc(c.label || c.channel) + '</span></div>' +
+        '<div class="ncard__body"><div class="ncard__when">' + esc(c.when) + '</div>' +
+        '<div style="font-size:13px; color:var(--pa-ink); line-height:18px; text-wrap:pretty">' + esc(c.text) + '</div>' +
+        (c.error ? '<div style="margin-top:8px; background:var(--pa-error-bg); color:var(--pa-error); border-radius:4px; padding:8px 10px; font-size:12px; line-height:17px">' + esc(c.error) + '</div>' : "") +
+        cardActions("rem", c.id, { canSuspend: col.key === "scheduled", canTest: col.key === "scheduled" && isEmail, canEdit: col.key === "scheduled" }) +
+        '</div></div>';
+    }).join("");
+    return '<div class="board__col"><div class="col-head">' + col.title + (cards.length ? " (" + cards.length + ")" : "") + '</div>' + body + '</div>';
+  }).join("");
+}
+
+function remindersTab() {
+  return '<div><h2 class="pa-screen-title">Reminders (72WC2612)</h2>' +
+    '<div style="display:flex; align-items:center; gap:14px; margin:20px 0 22px; flex-wrap:wrap">' +
+    '<span class="pa-eyebrow" style="color:var(--pa-ink-3)">Reminder Type</span>' +
+    '<div style="display:flex; align-items:center; gap:8px">' +
+    chip("Email", S.chanFilters.indexOf("Email") > -1, "toggleChan", "Email") +
+    chip("SMS", S.chanFilters.indexOf("SMS") > -1, "toggleChan", "SMS") + '</div>' +
+    btn("Clear Filters", "tertiary", "clearChan") + '</div>' +
+    '<div class="board">' + remindersBoard() + '</div></div>';
+}
+
+function followupsBoard() {
+  var active = S.fuCodes;
+  var all = [];
+  FU_BOARD.forEach(function (col) {
+    col.cards.forEach(function (c, i) { all.push(Object.assign({}, c, { id: col.key + i, col: col.key })); });
+  });
+  return FU_BOARD.map(function (col) {
+    var pool = col.key === "suspended"
+      ? all.filter(function (c) { return S.fuSuspended.indexOf(c.id) > -1; })
+      : all.filter(function (c) { return c.col === col.key && S.fuSuspended.indexOf(c.id) < 0; });
+    var cards = pool.filter(function (c) { return active.length === 0 || active.indexOf(c.code) > -1; });
+    var body = cards.map(function (c) {
+      var tint = (FU_CODES.filter(function (x) { return x.code === c.code; })[0] || {}).tint || "#3F5F70";
+      return '<div class="ncard"><div class="ncard__head" style="background:' + tint + '"><span>Email</span><span>' + esc(c.code) + '</span></div>' +
+        '<div class="ncard__body"><div class="ncard__when">' + esc(c.when) + '</div>' +
+        '<div style="font-size:14px; color:var(--pa-ink); line-height:20px; text-wrap:pretty">' + esc(c.text) + '</div>' +
+        cardActions("fu", c.id, { canSuspend: col.key === "scheduled", canTest: col.key === "scheduled", canEdit: col.key === "scheduled" }) +
+        '</div></div>';
+    }).join("");
+    return '<div class="board__col"><div class="col-head">' + col.title + (cards.length ? " (" + cards.length + ")" : "") + '</div>' + body + '</div>';
+  }).join("");
+}
+
+function followupsTab() {
+  return '<div><h2 class="pa-screen-title">Follow-Ups (13DR264)</h2>' +
+    '<div style="margin:20px 0 22px">' +
+    '<div class="pa-body-16" style="color:var(--pa-ink-2); margin-bottom:10px">Enduring Activities</div>' +
+    '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">' +
+    FU_CODES.map(function (c) { return chip(c.code, S.fuCodes.indexOf(c.code) > -1, "toggleFu", c.code); }).join("") +
+    btn("Clear Filters", "tertiary", "clearFu") + '</div></div>' +
+    '<div class="board">' + followupsBoard() + '</div></div>';
+}
+
+/* ---------------- settings tab ---------------- */
+
+function settingsTab() {
+  var swDisabled = !S.editing;
+  var mealChips = ["Breakfast", "Lunch", "Dinner", "Refreshments"].map(function (m) {
+    return chip(m, S.meal === m, "pickMeal", m);
+  }).join("");
+  return '<div><h2 class="pa-screen-title">Settings (72WC2612)</h2>' +
+    '<div style="max-width:900px; margin-top:20px"><div class="pa-card pa-card--form">' +
+    '<div class="pa-band"><span class="pa-band-title">Activity Level Variables</span></div>' +
+    '<div style="padding:24px 32px 32px; display:flex; flex-direction:column; gap:34px">' +
+    '<p class="pa-body-14" style="margin:0; color:var(--pa-ink-3)">Activating these variables will add them to all appropriate email templates.</p>' +
+
+    '<div style="display:flex; flex-direction:column; gap:20px">' +
+    '<label class="vsw' + (swDisabled ? " vsw--disabled" : "") + '" style="gap:14px">' +
+    '<input type="checkbox"' + (S.confReg ? " checked" : "") + (swDisabled ? " disabled" : "") + ' data-set="confReg">' +
+    '<span class="vsw__track"><span class="vsw__thumb"></span></span>' +
+    '<span class="pa-body-16" style="font-family:var(--pa-font-sans)">Conference Registration</span></label>' +
+    field("Registration verbiage", S.regText, "regText", { cls: (!S.editing || !S.confReg) ? "pa-field--disabled" : "", style: "max-width:620px", disabled: !S.editing || !S.confReg }) +
+    '</div>' +
+
+    '<div style="display:flex; flex-direction:column; gap:20px; border-top:1px solid var(--pa-line); padding-top:28px">' +
+    '<label class="vsw' + (swDisabled ? " vsw--disabled" : "") + '" style="gap:14px">' +
+    '<input type="checkbox"' + (S.meals ? " checked" : "") + (swDisabled ? " disabled" : "") + ' data-set="meals">' +
+    '<span class="vsw__track"><span class="vsw__thumb"></span></span>' +
+    '<span class="pa-body-16" style="font-family:var(--pa-font-sans)">Meals Served</span></label>' +
+    '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; opacity:' + (S.editing && S.meals ? "1" : "0.45") + '; pointer-events:' + (S.editing && S.meals ? "auto" : "none") + '">' + mealChips + '</div>' +
+    '<div style="display:flex; flex-direction:column; gap:22px; max-width:620px">' +
+    field("Meal verbiage one", S.mealOne, "mealOne", { cls: (!S.editing || !S.meals) ? "pa-field--disabled" : "", disabled: !S.editing || !S.meals }) +
+    field("Meal verbiage two", S.mealTwo, "mealTwo", { cls: (!S.editing || !S.meals) ? "pa-field--disabled" : "", disabled: !S.editing || !S.meals }) +
+    '</div></div></div></div></div></div>';
+}
+
+/* ---------------- modals ---------------- */
+
+function testModal() {
+  return '<div class="scrim" data-act="closeTest" data-scrim="1"><div class="modal" style="width:520px; max-width:100%; padding:26px 28px 20px">' +
+    '<div class="pa-modal-title">Test Email</div>' +
+    '<div class="pa-field" style="margin-top:22px"><label class="pa-field__label">Enter email addresses</label>' +
+    '<input class="pa-field__input" placeholder=" " value="' + esc(S.testEmails) + '" data-set="testEmails">' +
+    '<div class="pa-field__hint">Enter one or more email addresses, separated by commas, to send the test email. Only emails from <a href="https://primeinc.org">primeinc.org</a> or <a href="https://everydayhealthgroup.com">everydayhealthgroup.com</a> are valid.</div></div>' +
+    '<div class="modal__foot">' + btn("Cancel", "secondary-grey", "closeTest") + btn("Send Test Email", "primary", "closeTest") + '</div></div></div>';
+}
+
+function smsPreview(text) {
+  return '<div style="padding:32px"><div style="max-width:640px; margin:0 auto; background:#fff; border:1px solid var(--pa-divider); border-radius:var(--pa-radius-sm); padding:26px 28px">' +
+    '<p class="pa-body-16" style="margin:0; text-wrap:pretty">' + esc(text) + '</p></div></div>';
+}
+
+function onsitePreview() {
+  return '<div style="padding:32px"><div style="max-width:660px; margin:0 auto; background:#fff; border:1px solid var(--pa-divider); border-radius:var(--pa-radius-sm)">' +
+  '<div style="display:flex; align-items:center; justify-content:center; gap:14px; padding:30px 32px 26px; border-bottom:1px solid var(--pa-line)">' +
+  '<span style="flex:0 0 70px; height:2px; background:linear-gradient(90deg, rgba(0,173,238,0), var(--pa-aqua-500))"></span>' +
+  '<span style="flex:0 0 auto; white-space:nowrap; font-family:var(--pa-font-display); font-weight:300; font-size:30px; letter-spacing:1px; color:var(--pa-ink)">PRIME<span style="color:var(--pa-aqua-500); font-weight:400">&#8202;LIVE</span></span>' +
+  '<span style="flex:0 0 70px; height:2px; background:linear-gradient(90deg, var(--pa-aqua-500), rgba(0,173,238,0))"></span></div>' +
+  '<div style="padding:28px 40px 36px; display:flex; flex-direction:column; gap:18px">' +
+  '<div style="display:flex; align-items:center; justify-content:center; gap:12px; padding-bottom:4px">' +
+  '<i class="mdi mdi-account-group-outline" style="font-size:30px; color:var(--pa-primary)"></i>' +
+  '<span style="font-family:var(--pa-font-display); font-weight:300; font-size:25px; letter-spacing:1.4px; text-transform:uppercase; color:var(--pa-ink)">On-Site Event</span></div>' +
+  '<p class="pa-body-16" style="margin:0">We\'ve reserved your seat at the following CME/CE event:</p>' +
+  '<p class="pa-body-16" style="margin:0"><a class="em-link" href="#activity">QA1 - LV02 - Admin 3 &gt; Notifications &gt; Update AWS batch job</a></p>' +
+  '<p class="pa-body-16" style="margin:0; color:var(--pa-ink-2)">When: Thursday, September 24, 2026 at 11:45 PM, Eastern Time</p>' +
+  '<p class="pa-body-16" style="margin:0"><b style="font-weight:500">Where:</b></p>' +
+  '<p class="pa-body-16" style="margin:0">Add to Calendar</p>' +
+  '<div style="display:flex; align-items:center; justify-content:center; gap:12px">' +
+  '<a class="em-link" href="#outlook">Outlook</a><span style="color:var(--pa-ink-4)">|</span>' +
+  '<a class="em-link" href="#google">Google</a><span style="color:var(--pa-ink-4)">|</span>' +
+  '<a class="em-link" href="#ical">iCal</a></div>' +
+  '<p class="pa-body-16" style="margin:0">We look forward to seeing you!</p>' +
+  '<p class="pa-body-16" style="margin:0; text-wrap:pretty">If you are unable to attend this event, please reply to this message and let us know.</p></div>' +
+  '<div style="border-top:1px solid var(--pa-line); padding:18px 40px 26px; text-align:center"><div class="pa-caption">1997&ndash;2026 PRIME Education, LLC</div></div>' +
+  '</div></div>';
+}
+
+function editModal() {
+  var isEmail = S.editChannel === "Email";
+  var left = '<div style="min-width:0; overflow:auto; padding:24px 30px 30px; border-right:1px solid var(--pa-line)">' +
+    '<div class="pa-modal-title" style="text-transform:none">Edit ' + noun() + '</div>' +
+    '<div class="fields" style="margin-top:20px">' +
+    readField(noun() + " type", S.editChannel, { dashed: true }) +
+    (isEmail ? readField("Sailthru Template", templateName()) : "") +
+    '<div class="pair">' + readField("Send On", fmtDate(S.editWhen), { icon: "calendar-blank-outline" }) +
+    readField("Send At", fmtTime(S.editWhen), { icon: "clock-outline" }) + '</div>' +
+    tzSlider(S.editTz, "editTz") +
+    (isEmail
+      ? field("Subject line", S.editText, "editText") + rte("Custom Message one (HTML)") + rte("Custom Message two (HTML)") +
+        field("Button label", S.cloneButtonLabel, "cloneButtonLabel") + field("Button URL", S.cloneButtonUrl, "cloneButtonUrl") +
+        '<div class="pa-field"><label class="pa-field__label">Promoted Activity</label><input class="pa-field__input" placeholder=" "></div>'
+      : field("Message", S.editText, "editText", { textarea: true })) +
+    '</div><div class="modal__foot" style="margin-top:28px">' +
+    btn("Cancel", "secondary-grey", "closeEdit") + btn("Save", "secondary", "closeEdit") + btn("Save and Close", "primary", "closeEdit") +
+    '</div></div>';
+
+  var onPreview = S.editView === "preview";
+  var right = '<div style="display:flex; flex-direction:column; min-width:0; overflow:hidden">' +
+    '<div style="display:flex; align-items:center; gap:28px; padding:0 24px; border-bottom:1px solid var(--pa-line); flex:0 0 auto">' +
+    '<button class="pane-tab' + (onPreview ? " pane-tab--on" : "") + '" data-act="setEditView" data-arg="preview">Preview</button>' +
+    '<button class="pane-tab' + (!onPreview ? " pane-tab--on" : "") + '" data-act="setEditView" data-arg="tags">Template Tags</button>' +
+    '<div style="flex:1"></div>' + (isEmail ? btn("Send Test", "primary", "openTest") : "") + '</div>' +
+    '<div style="flex:1; overflow:auto; background:var(--pa-band)">' +
+    (onPreview ? (isEmail ? onsitePreview() : smsPreview(S.editText)) : '<div style="background:#fff; min-height:100%">' + tagTable("22px 28px 32px") + '</div>') +
+    '</div></div>';
+
+  return '<div class="scrim" style="align-items:stretch; padding:0">' +
+    '<div class="modal" style="position:absolute; inset:22px; display:grid; grid-template-columns:minmax(0,52%) minmax(0,1fr); overflow:hidden">' +
+    left + right + '</div></div>';
+}
+
+function cloneModal() {
+  var isCreate = S.cloneMode === "create";
+  var typeEditable = isCreate && S.tab !== "followups";
+  var isEmail = S.cloneChannel === "Email";
+  var title = (isCreate ? "Create " : "Clone ") + noun();
+  var typeField = typeEditable
+    ? '<div class="pa-field pa-field--filled"><label class="pa-field__label">' + noun() + ' type</label>' +
+      '<div class="pa-field__control" style="position:relative">' +
+      '<select data-set="cloneChannel" style="appearance:none; width:100%; border:0; background:transparent; outline:none; font-family:var(--pa-font-display); font-size:15px; color:var(--pa-ink); padding:0; cursor:pointer">' +
+      '<option value="Email"' + (isEmail ? " selected" : "") + '>Email</option>' +
+      '<option value="SMS"' + (!isEmail ? " selected" : "") + '>SMS</option></select>' +
+      '<i class="mdi mdi-menu-down" style="pointer-events:none"></i></div></div>'
+    : readField(noun() + " type", S.cloneChannel, { dashed: true });
+
+  return '<div class="scrim" style="align-items:center; padding:40px 0; overflow:auto">' +
+    '<div class="modal" style="width:660px; max-width:100%; margin:auto; padding:26px 32px 16px">' +
+    '<div class="pa-modal-title" style="text-transform:' + (isCreate ? "uppercase" : "none") + '">' + esc(title) + '</div>' +
+    '<div class="fields" style="margin-top:22px">' + typeField +
+    (isEmail ? readField("Sailthru Template", isCreate ? "1" : (S.tab === "followups" ? "Prime Enduring Follow-Up - Non-Completer" : "Prime Transactional Reminder - Live Event")) : "") +
+    '<div class="pair">' + readField("Send On", "mm/dd/yyyy", { icon: "calendar-blank-outline", muted: true }) +
+    readField("Send At", "--:-- --", { icon: "clock-outline", muted: true }) + '</div>' +
+    tzSlider(S.cloneTz, "cloneTz") +
+    (isEmail
+      ? field("Subject line", S.cloneSubject, "cloneSubject") + rte("Custom Message one (HTML)") + rte("Custom Message two (HTML)") +
+        field("Button label", S.cloneButtonLabel, "cloneButtonLabel") + field("Button URL", S.cloneButtonUrl, "cloneButtonUrl") +
+        '<div class="pa-field"><label class="pa-field__label">Promoted Activity</label><input class="pa-field__input" placeholder=" "></div>'
+      : field("Message", S.cloneSubject, "cloneSubject", { textarea: true })) +
+    '</div><div class="modal__foot" style="margin-top:28px">' +
+    btn("Cancel", "secondary-grey", "closeClone") + btn("Create " + noun(), "primary", "closeClone") + '</div></div></div>';
+}
+
+function suspendModal() {
+  return '<div class="scrim"><div class="modal" style="width:480px; max-width:100%; padding:26px 28px 14px">' +
+    '<div class="pa-modal-title">Confirm Suspend</div>' +
+    '<p class="pa-body-14" style="margin:16px 0 0; color:var(--pa-ink); line-height:24px; text-wrap:pretty">Are you sure you want to suspend this ' +
+    (S.tab === "followups" ? "follow-up" : "reminder") + '? The selected ' + esc(S.suspending.channel) +
+    ' will not be sent until you reschedule it. Please confirm your action.</p>' +
+    '<div class="modal__foot">' + btn("Cancel", "secondary-grey", "cancelSuspend") + btn("Suspend", "primary", "confirmSuspend") + '</div></div></div>';
+}
+
+function discardModal() {
+  var fromLabel = TAB_LABELS[S.tab];
+  var body = S.cancelPending
+    ? 'You have unsaved changes on the <b style="font-weight:500; color:var(--pa-ink)">' + fromLabel + '</b> tab. Cancelling will discard them unless you save first.'
+    : 'You have unsaved changes on the <b style="font-weight:500; color:var(--pa-ink)">' + fromLabel + '</b> tab. Each tab saves separately, so leaving for <b style="font-weight:500; color:var(--pa-ink)">' + TAB_LABELS[S.discard] + '</b> will discard them unless you save first.';
+  return '<div class="scrim"><div class="modal" style="width:480px; max-width:100%; padding:26px 28px 20px">' +
+    '<div class="pa-modal-title">Unsaved Changes</div>' +
+    '<p class="pa-body-14" style="margin:14px 0 0; color:var(--pa-ink-2); text-wrap:pretty">' + body + '</p>' +
+    '<div class="modal__foot">' + btn("Stay Here", "tertiary-grey", "keepEditing") +
+    btn("Discard", "secondary-grey", "confirmDiscard") + btn("Save & Continue", "primary", "saveAndContinue") + '</div></div></div>';
+}
+
+/* ---------------- render ---------------- */
+
+function tabBody() {
+  if (S.tab === "confirmation") return confirmationTab();
+  if (S.tab === "reminders") return remindersTab();
+  if (S.tab === "followups") return followupsTab();
+  return settingsTab();
+}
+
+function render() {
+  var modals = "";
+  if (S.testOpen) modals += testModal();
+  if (S.editOpen) modals += editModal();
+  if (S.cloneOpen) modals += cloneModal();
+  if (S.suspending) modals += suspendModal();
+  if (S.discard || S.cancelPending) modals += discardModal();
+
+  document.getElementById("app").innerHTML =
+    '<div class="app">' + sidebar() +
+    '<div style="flex:1; min-width:0; display:flex; flex-direction:column">' + topbar() +
+    '<div style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column">' +
+    pageHeader() + tabs() +
+    '<div style="flex:1 1 auto; padding:22px 32px 48px">' +
+    '<div class="pa-crumb" style="margin-bottom:6px">Marketing / Notifications / ' + (S.tab === "followups" ? "13DR264" : "72WC2612") + '</div>' +
+    tabBody() + '</div>' +
+    '<footer class="app-footer">1997-2026 PRIME Education, LLC</footer>' +
+    '</div></div></div>' + modals;
+}
+
+/* ---------------- behavior ---------------- */
+
+function findCard(scope, id) {
+  var board = scope === "fu" ? FU_BOARD : BOARD;
+  var found = null;
+  board.forEach(function (col) {
+    col.cards.forEach(function (c, i) { if (col.key + i === id) found = Object.assign({}, c, { id: id }); });
+  });
+  return found;
+}
+
+var ACTIONS = {
+  setTab: function (arg) {
+    if (arg === S.tab) return;
+    if (S.dirty) set({ discard: arg });
+    else set({ tab: arg, editing: false });
+  },
+  setView: function (arg) { set({ view: arg }); },
+  setEditView: function (arg) { set({ editView: arg }); },
+  setType: function (arg) { edit({ type: arg }); },
+  startEdit: function () { set({ editing: true }); },
+  saveEdit: function () { set({ editing: false, dirty: false }); },
+  requestCancel: function () { S.dirty ? set({ cancelPending: true }) : set({ editing: false }); },
+  keepEditing: function () { set({ discard: null, cancelPending: false }); },
+  confirmDiscard: function () {
+    set({ tab: S.discard || S.tab, discard: null, cancelPending: false, editing: false, dirty: false });
+  },
+  saveAndContinue: function () {
+    set({ tab: S.discard || S.tab, discard: null, cancelPending: false, editing: false, dirty: false });
+  },
+  toggleChan: function (arg) { set({ chanFilters: flip(S.chanFilters, arg) }); },
+  clearChan: function () { set({ chanFilters: [] }); },
+  toggleFu: function (arg) { set({ fuCodes: flip(S.fuCodes, arg) }); },
+  clearFu: function () { set({ fuCodes: [] }); },
+  pickMeal: function (arg) { edit({ meal: S.meal === arg ? null : arg }); },
+  openTest: function () { set({ testOpen: true }); },
+  closeTest: function () { set({ testOpen: false }); },
+  openCreate: function () {
+    set({ cloneOpen: true, cloneMode: "create", cloneChannel: "Email", cloneSubject: "", cloneTz: 3 });
+  },
+  openClone: function (arg) {
+    var parts = arg.split(":");
+    var c = findCard(parts[0], parts[1]) || {};
+    set({ cloneOpen: true, cloneMode: "clone", cloneSubject: c.text || "", cloneChannel: parts[0] === "fu" ? "Email" : (c.channel || "Email") });
+  },
+  closeClone: function () { set({ cloneOpen: false }); },
+  openEdit: function (arg) {
+    var parts = arg.split(":");
+    var c = findCard(parts[0], parts[1]) || {};
+    set({
+      editOpen: true, editView: "preview",
+      editChannel: parts[0] === "fu" ? "Email" : (c.channel || "Email"),
+      editText: c.text || "", editWhen: c.when || ""
+    });
+  },
+  closeEdit: function () { set({ editOpen: false }); },
+  askSuspend: function (arg) {
+    var parts = arg.split(":");
+    var c = findCard(parts[0], parts[1]) || {};
+    set({ suspending: { scope: parts[0], id: parts[1], channel: parts[0] === "fu" ? "Email" : (c.channel || "Email") } });
+  },
+  cancelSuspend: function () { set({ suspending: null }); },
+  confirmSuspend: function () {
+    var s = S.suspending;
+    if (s.scope === "fu") set({ suspending: null, fuSuspended: S.fuSuspended.concat([s.id]) });
+    else set({ suspending: null, suspended: S.suspended.concat([s.id]) });
+  }
+};
+
+var DIRTY_FIELDS = ["disableConf", "tz", "subject", "btnLabel", "btnUrl", "confReg", "meals", "regText", "mealOne", "mealTwo"];
+
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-act]");
+  if (!el) return;
+  if (el.hasAttribute("data-scrim") && e.target !== el) return;
+  var fn = ACTIONS[el.getAttribute("data-act")];
+  if (fn) { e.preventDefault(); fn(el.getAttribute("data-arg")); }
+});
+
+document.addEventListener("change", function (e) {
+  var el = e.target.closest("[data-set]");
+  if (!el) return;
+  var key = el.getAttribute("data-set");
+  var value = el.type === "checkbox" ? el.checked : (el.type === "range" ? Number(el.value) : el.value);
+  var patch = {};
+  patch[key] = value;
+  if (DIRTY_FIELDS.indexOf(key) > -1) edit(patch);
+  else set(patch);
+});
+
+render();
+</script>
+</body>
+</html>
